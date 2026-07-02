@@ -1,4 +1,6 @@
 .env
 .venv
-scripts
+scratch
 __pycache__
+
+*.db
