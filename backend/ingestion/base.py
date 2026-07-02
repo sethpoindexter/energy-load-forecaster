@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from pandas import DataFrame
+import pandas as pd
 
 class DataSource(ABC):
 
     @abstractmethod
-    def fetch(self, start: datetime, end: datetime) -> DataFrame:
+    def fetch(self, start: datetime, end: datetime) -> list[dict]:
         pass
