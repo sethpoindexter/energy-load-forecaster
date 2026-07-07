@@ -4,15 +4,23 @@ import pandas as pd
 import requests
 from app.config import MISO_API_KEY
 
-ENDPOINT: str = "https://apim.misoenergy.org/lgi/v1/real-time/{}/demand/actual?geoResolution=region&pageNumber=1&timeResolution=hourly"
+ENDPOINT = "https://apim.misoenergy.org/lgi/v1/real-time/{}/demand/actual?geoResolution=region&pageNumber=1&timeResolution=hourly"
 
 class MISODataSource(DataSource):
 
     def fetch(self, start: datetime, end: datetime) -> list[dict]:
+        today = datetime.today()
+        if start > today or end > today:
+            print("Failed to fetch MISO load data. Start and end dates must occur before today's date.")
+            return None
+        if start > end:
+            print("Failed to fetch MISO load data. Start date must occur before end date.")
+            return None
+        
         unique_days: pd.DatetimeIndex = pd.date_range(start=start, end=end, freq="D")
         date_strings: pd.Index[str] = unique_days.strftime("%Y-%m-%d")
 
-        load_by_timestamp: dict[str: float] = {}
+        load_by_timestamp: dict[str, float] = {}
 
         for date_string in date_strings:
             response: requests.Response = requests.get(
@@ -29,7 +37,7 @@ class MISODataSource(DataSource):
             response_data = response.json()["data"]
             
             for datapoint in response_data:
-                timestamp: datetime = datetime.fromisoformat(datapoint["timeInterval"]["start"])
+                timestamp = datetime.fromisoformat(datapoint["timeInterval"]["start"])
                 if not (start <= timestamp <= end):
                     continue
                 load_mw: float = float(datapoint["load"])
