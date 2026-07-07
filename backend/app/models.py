@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -8,7 +8,7 @@ class LoadRecord(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     timestamp = Column(DateTime(timezone=True), nullable=False, index=True)
-    load_mw = Column(Float, nullable=False)
+    load_mw = Column(Integer, nullable=False)
     source = Column(String, nullable=False)
 
     __table_args__ = (
