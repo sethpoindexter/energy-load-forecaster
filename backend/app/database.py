@@ -22,7 +22,7 @@ def upsert_load_data(df: pd.DataFrame, session=None):
     stmt = insert_fn(LoadRecord).values(records)
 
     stmt = stmt.on_conflict_do_update(
-        index_elements=["timestamp"],
+        index_elements=["timestamp", "region"],
         set_={
             "load_mw": stmt.excluded.load_mw,
             "source": stmt.excluded.source
