@@ -7,8 +7,8 @@ def normalize(raw_data: list[dict], source: str) -> pd.DataFrame:
     df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
     df["load_mw"] = df["load_mw"].astype(int)
     df["source"] = source
-    
-    df = df.drop_duplicates(subset=["timestamp"])
-    df = df.sort_values("timestamp").reset_index(drop=True)
+
+    df = df.drop_duplicates(subset=["timestamp", "region"])
+    df = df.sort_values(["timestamp", "region"]).reset_index(drop=True)
 
     return df
