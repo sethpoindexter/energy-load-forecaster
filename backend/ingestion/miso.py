@@ -20,7 +20,7 @@ class MISODataSource(DataSource):
         unique_days: pd.DatetimeIndex = pd.date_range(start=start, end=end, freq="D")
         date_strings: pd.Index[str] = unique_days.strftime("%Y-%m-%d")
 
-        load_by_timestamp: dict[str, float] = {}
+        raw_data: list[dict] = []
 
         for date_string in date_strings:
             response: requests.Response = requests.get(
@@ -35,26 +35,16 @@ class MISODataSource(DataSource):
                 return
 
             response_data = response.json()["data"]
-            
+
             for datapoint in response_data:
                 timestamp = datetime.fromisoformat(datapoint["timeInterval"]["start"])
                 if not (start <= timestamp <= end):
                     continue
-                load_mw: float = float(datapoint["load"])
 
-                if timestamp in load_by_timestamp:
-                    load_by_timestamp[timestamp] = load_by_timestamp[timestamp] + load_mw
-                else:
-                    load_by_timestamp[timestamp] = load_mw
-
-        raw_data: list[dict] = []
-        
-        for timestamp, load_mw in load_by_timestamp.items():
-            raw_data.append({
-                "timestamp": timestamp,
-                "load_mw": load_mw
-            })
+                raw_data.append({
+                    "timestamp": timestamp,
+                    "region": datapoint["region"],
+                    "load_mw": float(datapoint["load"])
+                })
 
         return raw_data
-                
-                
