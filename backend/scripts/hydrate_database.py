@@ -4,8 +4,9 @@ from ingestion import normalize
 from datetime import datetime
 import pandas as pd
 
-START_DATE = datetime(2026, 6, 1, 0)     # June 1,  2026, 0:00  UTC
-END_DATE   = datetime(2026, 6, 14, 23)   # June 14, 2026, 23:00 UTC
+# Dates are in EST timezone
+START_DATE = datetime(2025, 6, 1, 0)
+END_DATE   = datetime(2026, 6, 30, 23)
 
 def hydrate():
     data_source = MISODataSource()
